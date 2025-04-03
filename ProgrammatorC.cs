@@ -13,47 +13,13 @@ namespace ProgrammatorC
 {
 	// Класс ProgrammatorC - Программатор
 	
-	// 1. Пересечь прямые                      - Intersect2Line
-	// 2. Пересечь кривые                      - Intersect2Curve
-	// 3. Пересечь отрезок и дугу              - IntersectLineSegArc
-	// 4. Касательная из точки                 - TanLinePointCircle
-	// 5. Касательная под углом                - TanLineAngCircle
-	// 6. Поворот точки                        - RotatePoint
-	// 7. Симметрия точки                      - SymmetryPoint
-	// 8. Сопрягающие окружности к двум прямым - Couplin2Lines
-	// 9. Перепендикуляр                       - Perpendicular
 
 	[ClassInterface(ClassInterfaceType.AutoDual)]
-	public class Step2New2
+	public class ProgrammatorC
 	{
 		private KompasObject kompas;
 		private ksDocument2D doc;
 		private ksMathematic2D mat;
-
-        /// <summary>
-        /// Отрисовка точек пересечения в документе doc по
-        /// присланному массиву и выдача пользователю их координат
-        /// </summary>
-        private void DrawPointByArray(ksDynamicArray arr)
-		{
-			if (arr != null)
-			{
-				// Создать интерфейс параметров математической точки
-				ksMathPointParam par = (ksMathPointParam) kompas.GetParamStruct((short) StructType2DEnum.ko_MathPointParam);
-
-				if (par != null)
-				{
-					// Интерфейс создан
-					for (int i = 0; i < arr.ksGetArrayCount(); i ++)
-					{
-						arr.ksGetArrayItem(i, par);
-						doc.ksPoint(par.x, par.y, 5);
-						string buf = string.Format("x = {0:.##} y = {1:.##}", par.x, par.y);
-						kompas.ksMessage(buf);
-					}
-				}
-			}
-		}
 
 
 		// Перестроить активный вид
@@ -83,14 +49,6 @@ namespace ProgrammatorC
 			
 		}
 
-
-		// Касательная под углом
-		private void TanToAngle()
-		{
-			
-		}
-
-
 		// стирание извещений
 		private void CleanUpRecordsOfChangesInAllSheets()
 		{
@@ -112,7 +70,7 @@ namespace ProgrammatorC
 
 		[return: MarshalAs(UnmanagedType.BStr)] public string GetLibraryName()
 		{
-			return "Step2New2 - Создание Панели инструментов";
+			return "Programmator - Создание Панели инструментов";
 		}
 
 
@@ -123,40 +81,28 @@ namespace ProgrammatorC
 			switch (number)
 			{
 				case 1:
-					result = "1-Пересечь прямые";
+					result = "1-Перестроить вид";
 					command = 1;
 					break;
 				case 2:
-					result = "2-Пересечь кривые";
+					result = "2-Изменить тип линий на тонкую";
 					command = 2;
 					break;
 				case 3:
-					result = "3-Пересечь отрезок и дугу";
+					result = "3-Изменить тип линий на вспомогательную";
 					command = 3;
 					break;
 				case 4:
-					result = "4-Касательная из точки";
+					result = "4-Убрать выделенное на скрытый слой";
 					command = 4;
 					break;
 				case 5:
-					result = "5-Касательная под углом";
+					result = "5-Затирание извещений";
 					command = 5;
 					break;
 				case 6:
-					result = "6-затирание извещений";
+					result = "6-Затирание дат";
 					command = 6;
-					break;
-				case 7:
-					result = "7-Симметрия точки";
-					command = 7;
-					break;
-				case 8:
-					result = "8-Сопрягающие окружности к двум прямым";
-					command = 8;
-					break;
-				case 9:
-					result = "9-Перестроить документ";
-					command = 9;
 					break;
 				case 10:
 					command = -1;
