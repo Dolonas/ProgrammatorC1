@@ -29,27 +29,27 @@ namespace ProgrammatorC
 		}
 
 
-		// Пересечь кривые
+		// Изменить тип линий на тонкую
 		private void ChangeSelectedLinesToTypeThink()
 		{
 			
 		}
 
 
-		// Пересечь отрезок и дугу
+		// Изменить тип линий на вспомогательную
 		private void ChangeSelectedLinesToTypeInviseble()
 		{
 			
 		}
 
 
-		// Касательная из точки
+		// Убрать выделенное на скрытый слой
 		private void HideSelectedToInvisibleLayer()
 		{
 			
 		}
 
-		// стирание извещений
+		// Затирание извещений
 		private void CleanUpRecordsOfChangesInAllSheets()
 		{
 			var sheetsNum = doc.ksGetDocumentPagesCount();
@@ -63,6 +63,8 @@ namespace ProgrammatorC
 				}
 			}
 		}
+		
+		//Затирание дат
 		private void CleanUpRecordsOfDates()
 		{
 			
