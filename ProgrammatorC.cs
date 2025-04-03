@@ -108,7 +108,7 @@ namespace ProgrammatorC
 					break;
 				case 10:
 					command = -1;
-					itemType = 3; // "ENDMENU"
+					itemType = 6; // "ENDMENU"
 					break;
 			}
             return result;
@@ -139,7 +139,7 @@ namespace ProgrammatorC
 				case 6:	CleanUpRecordsOfDates();				break; // Затирание дат
 			}
 
-			kompas.ksMessageBoxResult();
+			kompas.ksMessage("Готово");
 		}
 
 
