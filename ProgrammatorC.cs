@@ -138,7 +138,7 @@ namespace ProgrammatorC
 				case 6:	CleanUpRecordsOfDates();				break; // Затирание дат
 			}
 
-			_kompas7.MessageBoxEx("Готово", "Информация", 0);
+			_kompas7.MessageBoxEx("Готово", "Информация", 14);
 		}
 
 
