@@ -1,4 +1,4 @@
-using Kompas6API5;
+
 using System;
 using System.Collections.Generic;
 using Microsoft.Win32;
@@ -7,25 +7,24 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Globalization;
 using KAPITypes;
+using Kompas6API5;
+using KompasAPI7;
 using Kompas6Constants;
 
 namespace ProgrammatorC
 {
-	// Класс ProgrammatorC - Программатор
-	
-
 	[ClassInterface(ClassInterfaceType.AutoDual)]
 	public class ProgrammatorC
 	{
-		private KompasObject kompas;
-		private ksDocument2D doc;
-		private ksMathematic2D mat;
+		private KompasObject _kompas;
+		public IApplication _kompas7;
+		private ksDocument2D _doc;
 
 
 		// Перестроить активный вид
 		private void RebuildSelectedView()
 		{
-			doc.ksRebuildDocument();
+			_doc.ksRebuildDocument();
 		}
 
 
@@ -37,7 +36,7 @@ namespace ProgrammatorC
 
 
 		// Изменить тип линий на вспомогательную
-		private void ChangeSelectedLinesToTypeInviseble()
+		private void ChangeSelectedLinesToTypeInvisible()
 		{
 			
 		}
@@ -52,11 +51,11 @@ namespace ProgrammatorC
 		// Затирание извещений
 		private void CleanUpRecordsOfChangesInAllSheets()
 		{
-			var sheetsNum = doc.ksGetDocumentPagesCount();
+			var sheetsNum = _doc.ksGetDocumentPagesCount();
 			var cellList = new List<int>{140, 150, 160, 170, 180}; 
 			for (var i = 0; i <= sheetsNum; i++)
 			{
-				var stamp = (ksStamp)doc.GetStampEx(i);
+				var stamp = (ksStamp)_doc.GetStampEx(i);
 				foreach (var cell in cellList)
 				{
 					stamp.ksClearStamp(cell);
@@ -117,29 +116,29 @@ namespace ProgrammatorC
 	
 		public void ExternalRunCommand([In] short command, [In] short mode, [In, MarshalAs(UnmanagedType.IDispatch)] object kompas_)
 		{
-			kompas = (KompasObject) kompas_;
-			if (kompas == null)
+			_kompas = (KompasObject) kompas_;
+			if (_kompas == null)
+				return;
+			
+			_kompas7 = _kompas.ksGetApplication7() as IApplication;
+			if (_kompas7 == null)
 				return;
 
-			doc = (ksDocument2D) kompas.ActiveDocument2D();
-			if (doc == null)
-				return;
-
-			mat = (ksMathematic2D) kompas.GetMathematic2D();
-			if (mat == null)
+			_doc = (ksDocument2D) _kompas.ActiveDocument2D();
+			if (_doc == null)
 				return;
 
 			switch (command)
 			{
 				case 1:	RebuildSelectedView();			break; // перестроить вид
 				case 2: ChangeSelectedLinesToTypeThink();			break; // Изменить тип линий на тонкую
-				case 3: ChangeSelectedLinesToTypeInviseble();	break; // Изменить тип линий на вспомогательную
+				case 3: ChangeSelectedLinesToTypeInvisible();	break; // Изменить тип линий на вспомогательную
 				case 4:	HideSelectedToInvisibleLayer();				break; // Убрать выделенное на скрытый слой
 				case 5:	CleanUpRecordsOfChangesInAllSheets();				break; // Затирание извещений
 				case 6:	CleanUpRecordsOfDates();				break; // Затирание дат
 			}
 
-			kompas.ksMessage("Готово");
+			_kompas7.MessageBoxEx("Готово", "Информация", 0);
 		}
 
 
@@ -151,7 +150,7 @@ namespace ProgrammatorC
 
 		public int ExternalGetToolBarId(short barType, short index)
 		{
-			int result = 0;
+			var result = 0;
 
 			if (barType == 0)
 			{
@@ -181,17 +180,20 @@ namespace ProgrammatorC
 		{
 			try
 			{
-				RegistryKey regKey = Registry.LocalMachine;
-				string keyName = @"SOFTWARE\Classes\CLSID\{" + t.GUID.ToString() + "}";
+				var regKey = Registry.LocalMachine;
+				var keyName = @"SOFTWARE\Classes\CLSID\{" + t.GUID.ToString() + "}";
 				regKey = regKey.OpenSubKey(keyName, true);
+				if (regKey == null) return;
 				regKey.CreateSubKey("Kompas_Library");
 				regKey = regKey.OpenSubKey("InprocServer32", true);
-				regKey.SetValue(null, System.Environment.GetFolderPath(Environment.SpecialFolder.System) + @"\mscoree.dll");
+				if (regKey == null) return;
+				regKey.SetValue(null,
+					System.Environment.GetFolderPath(Environment.SpecialFolder.System) + @"\mscoree.dll");
 				regKey.Close();
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(string.Format("При регистрации класса для COM-Interop произошла ошибка:\n{0}", ex));
+				MessageBox.Show($"При регистрации класса для COM-Interop произошла ошибка:\n{ex}");
 			}
 		}
 		
@@ -199,9 +201,10 @@ namespace ProgrammatorC
 		[ComUnregisterFunction]
 		public static void UnregisterKompasLib(Type t)
 		{
-			RegistryKey regKey = Registry.LocalMachine;
-			string keyName = @"SOFTWARE\Classes\CLSID\{" + t.GUID.ToString() + "}";
-			RegistryKey subKey = regKey.OpenSubKey(keyName, true);
+			var regKey = Registry.LocalMachine;
+			var keyName = @"SOFTWARE\Classes\CLSID\{" + t.GUID.ToString() + "}";
+			var subKey = regKey.OpenSubKey(keyName, true);
+			if (subKey == null) return;
 			subKey.DeleteSubKey("Kompas_Library");
 			subKey.Close();
 		}
