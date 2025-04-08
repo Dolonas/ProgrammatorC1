@@ -17,7 +17,7 @@ namespace ProgrammatorC
 	public class ProgrammatorC
 	{
 		private KompasObject _kompas;
-		public IApplication _kompas7;
+		private IApplication _kompas7;
 		private ksDocument2D _doc;
 
 

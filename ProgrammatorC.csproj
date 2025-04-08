@@ -115,7 +115,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="KAPITypes">
-      <HintPath>C:\Program Files\ASCON\KOMPAS-3D v20\Libs\IOSO\KAPITypes.dll</HintPath>
+      <HintPath>lib\KAPITypes.dll</HintPath>
     </Reference>
     <Reference Include="Kompas6API5">
       <HintPath>lib\Kompas6API5.dll</HintPath>
