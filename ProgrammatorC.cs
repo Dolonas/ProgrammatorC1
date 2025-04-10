@@ -63,7 +63,25 @@ namespace ProgrammatorC
 		//Затирание дат
 		private void CleanUpRecordsOfDates()
 		{
-			
+			var sheetsNum = _doc.ksGetDocumentPagesCount();
+			var cellList = new List<int>{181, 180, 130, 131, 132, 133, 134, 135}; 
+			for (var i = 0; i <= sheetsNum; i++)
+			{
+				var stamp = (ksStamp)_doc.GetStampEx(i);
+				foreach (var cell in cellList)
+				{
+					try
+					{
+						stamp.ksClearStamp(cell);
+					}
+					catch (Exception e)
+					{
+						Console.WriteLine(e);
+						continue;
+					}
+					
+				}
+			}
 		}
 
 		[return: MarshalAs(UnmanagedType.BStr)] public string GetLibraryName()
@@ -78,33 +96,33 @@ namespace ProgrammatorC
 			itemType = 1; // "MENUITEM"
 			switch (number)
 			{
-				case 741:
+				case 1:
 					result = "1-Перестроить вид";
-					command = 741;
+					command = 1;
 					break;
-				case 742:
+				case 2:
 					result = "2-Изменить тип линий на тонкую";
-					command = 742;
+					command = 2;
 					break;
-				case 743:
+				case 3:
 					result = "3-Изменить тип линий на вспомогательную";
-					command = 743;
+					command = 3;
 					break;
-				case 744:
+				case 4:
 					result = "4-Убрать выделенное на скрытый слой";
-					command = 744;
+					command = 4;
 					break;
-				case 745:
+				case 5:
 					result = "5-Затирание извещений";
-					command = 745;
+					command = 5;
 					break;
-				case 746:
+				case 6:
 					result = "6-Затирание дат";
-					command = 746;
+					command = 6;
 					break;
-				case 750:
+				case 0:
 					command = -1;
-					itemType = 6; // "ENDMENU"
+					itemType = 13; // "ENDMENU"
 					break;
 			}
             return result;
@@ -127,12 +145,12 @@ namespace ProgrammatorC
 
 			switch (command)
 			{
-				case 741:	RebuildSelectedView();			break; // перестроить вид
-				case 742: ChangeSelectedLinesToTypeThink();			break; // Изменить тип линий на тонкую
-				case 743: ChangeSelectedLinesToTypeInvisible();	break; // Изменить тип линий на вспомогательную
-				case 744:	HideSelectedToInvisibleLayer();				break; // Убрать выделенное на скрытый слой
-				case 745:	CleanUpRecordsOfChangesInAllSheets();				break; // Затирание извещений
-				case 746:	CleanUpRecordsOfDates();				break; // Затирание дат
+				case 1:	RebuildSelectedView();			break; // перестроить вид
+				case 2: ChangeSelectedLinesToTypeThink();			break; // Изменить тип линий на тонкую
+				case 3: ChangeSelectedLinesToTypeInvisible();	break; // Изменить тип линий на вспомогательную
+				case 4:	HideSelectedToInvisibleLayer();				break; // Убрать выделенное на скрытый слой
+				case 5:	CleanUpRecordsOfChangesInAllSheets();				break; // Затирание извещений
+				case 6:	CleanUpRecordsOfDates();				break; // Затирание дат
 			}
 
 			//_kompas7.MessageBoxEx("Готово", "Информация ", 3);
