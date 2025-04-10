@@ -1,15 +1,12 @@
-
 using System;
 using System.Collections.Generic;
 using Microsoft.Win32;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using System.Globalization;
 using KAPITypes;
 using Kompas6API5;
 using KompasAPI7;
-using Kompas6Constants;
 
 namespace ProgrammatorC
 {
@@ -81,31 +78,31 @@ namespace ProgrammatorC
 			itemType = 1; // "MENUITEM"
 			switch (number)
 			{
-				case 1:
+				case 741:
 					result = "1-Перестроить вид";
-					command = 1;
+					command = 741;
 					break;
-				case 2:
+				case 742:
 					result = "2-Изменить тип линий на тонкую";
-					command = 2;
+					command = 742;
 					break;
-				case 3:
+				case 743:
 					result = "3-Изменить тип линий на вспомогательную";
-					command = 3;
+					command = 743;
 					break;
-				case 4:
+				case 744:
 					result = "4-Убрать выделенное на скрытый слой";
-					command = 4;
+					command = 744;
 					break;
-				case 5:
+				case 745:
 					result = "5-Затирание извещений";
-					command = 5;
+					command = 745;
 					break;
-				case 6:
+				case 746:
 					result = "6-Затирание дат";
-					command = 6;
+					command = 746;
 					break;
-				case 10:
+				case 750:
 					command = -1;
 					itemType = 6; // "ENDMENU"
 					break;
@@ -114,9 +111,9 @@ namespace ProgrammatorC
 		}
 
 	
-		public void ExternalRunCommand([In] short command, [In] short mode, [In, MarshalAs(UnmanagedType.IDispatch)] object kompas_)
+		public void ExternalRunCommand([In] short command, [In] short mode, [In, MarshalAs(UnmanagedType.IDispatch)] object kompas)
 		{
-			_kompas = (KompasObject) kompas_;
+			_kompas = (KompasObject) kompas;
 			if (_kompas == null)
 				return;
 			
@@ -130,15 +127,15 @@ namespace ProgrammatorC
 
 			switch (command)
 			{
-				case 1:	RebuildSelectedView();			break; // перестроить вид
-				case 2: ChangeSelectedLinesToTypeThink();			break; // Изменить тип линий на тонкую
-				case 3: ChangeSelectedLinesToTypeInvisible();	break; // Изменить тип линий на вспомогательную
-				case 4:	HideSelectedToInvisibleLayer();				break; // Убрать выделенное на скрытый слой
-				case 5:	CleanUpRecordsOfChangesInAllSheets();				break; // Затирание извещений
-				case 6:	CleanUpRecordsOfDates();				break; // Затирание дат
+				case 741:	RebuildSelectedView();			break; // перестроить вид
+				case 742: ChangeSelectedLinesToTypeThink();			break; // Изменить тип линий на тонкую
+				case 743: ChangeSelectedLinesToTypeInvisible();	break; // Изменить тип линий на вспомогательную
+				case 744:	HideSelectedToInvisibleLayer();				break; // Убрать выделенное на скрытый слой
+				case 745:	CleanUpRecordsOfChangesInAllSheets();				break; // Затирание извещений
+				case 746:	CleanUpRecordsOfDates();				break; // Затирание дат
 			}
 
-			_kompas7.MessageBoxEx("Готово", "Информация", 14);
+			//_kompas7.MessageBoxEx("Готово", "Информация ", 3);
 		}
 
 
