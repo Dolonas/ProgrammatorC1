@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using KAPITypes;
 using Kompas6API5;
+using Kompas6Constants;
 using KompasAPI7;
 
 namespace ProgrammatorC
@@ -15,13 +16,19 @@ namespace ProgrammatorC
 	{
 		private KompasObject _kompas;
 		private IApplication _kompas7;
+		private KompasDocument _activeDocument;
+		private DocumentTypeEnum _activeDocumentType;
 		private ksDocument2D _doc;
+		private ksDocument3D _partAssembly;
 
 
 		// Перестроить активный вид
 		private void RebuildSelectedView()
 		{
-			_doc.ksRebuildDocument();
+			if(_activeDocumentType == DocumentTypeEnum.ksDocumentDrawing)
+				_doc.ksRebuildDocument();
+			if (_activeDocumentType == DocumentTypeEnum.ksDocumentAssembly)
+				_partAssembly.RebuildDocument();
 		}
 
 
@@ -139,9 +146,22 @@ namespace ProgrammatorC
 			if (_kompas7 == null)
 				return;
 
-			_doc = (ksDocument2D) _kompas.ActiveDocument2D();
-			if (_doc == null)
-				return;
+			_activeDocument = (KompasDocument)_kompas7.ActiveDocument;
+			_activeDocumentType = _activeDocument.DocumentType;
+			
+			if(_activeDocumentType == DocumentTypeEnum.ksDocumentDrawing)
+			{
+				_doc = (ksDocument2D)_kompas.ActiveDocument2D();
+				if (_doc == null)
+					return;
+			}
+			
+			if(_activeDocumentType == DocumentTypeEnum.ksDocumentAssembly)
+			{
+				_partAssembly = (ksDocument3D)_kompas.Document3D();
+				if (_partAssembly == null)
+					return;
+			}
 
 			switch (command)
 			{
