@@ -19,7 +19,7 @@ namespace ProgrammatorC
 		private KompasDocument _activeDocument;
 		private DocumentTypeEnum _activeDocumentType;
 		private ksDocument2D _doc;
-		private ksDocument3D _partAssembly;
+		private ksDocument3D _partOrAssembly;
 
 
 		// Перестроить активный вид
@@ -27,8 +27,6 @@ namespace ProgrammatorC
 		{
 			if(_activeDocumentType == DocumentTypeEnum.ksDocumentDrawing)
 				_doc.ksRebuildDocument();
-			if (_activeDocumentType == DocumentTypeEnum.ksDocumentAssembly)
-				_partAssembly.RebuildDocument();
 		}
 
 
@@ -90,12 +88,21 @@ namespace ProgrammatorC
 				}
 			}
 		}
+		
+		//Перестроить деталь или сборку
+		private void Rebuild3dPart()
+		{
+			_activeDocumentType = _activeDocument.DocumentType;
+			if (_activeDocumentType != DocumentTypeEnum.ksDocumentAssembly &&
+			    _activeDocumentType != DocumentTypeEnum.ksDocumentPart) return;
+			_partOrAssembly = (ksDocument3D)_kompas.Document3D();
+			_partOrAssembly.RebuildDocument();
+		}
 
 		[return: MarshalAs(UnmanagedType.BStr)] public string GetLibraryName()
 		{
 			return "Programmator - Создание Панели инструментов";
 		}
-
 
 		[return: MarshalAs(UnmanagedType.BStr)] public string ExternalMenuItem(short number, ref short itemType, ref short command)
 		{
@@ -127,9 +134,13 @@ namespace ProgrammatorC
 					result = "6-Затирание дат";
 					command = 6;
 					break;
+				case 7:
+					result = "7-Перестроить деталь или сборку";
+					command = 7;
+					break;
 				case 0:
 					command = -1;
-					itemType = 13; // "ENDMENU"
+					itemType = 8; // "ENDMENU"
 					break;
 			}
             return result;
@@ -158,8 +169,8 @@ namespace ProgrammatorC
 			
 			if(_activeDocumentType == DocumentTypeEnum.ksDocumentAssembly)
 			{
-				_partAssembly = (ksDocument3D)_kompas.Document3D();
-				if (_partAssembly == null)
+				_partOrAssembly = (ksDocument3D)_kompas.Document3D();
+				if (_partOrAssembly == null)
 					return;
 			}
 
@@ -205,6 +216,11 @@ namespace ProgrammatorC
 			}
 
 			return result;
+		}
+
+		private void GetActiveDocumentType()
+		{
+			
 		}
 
 
