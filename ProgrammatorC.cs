@@ -92,10 +92,12 @@ namespace ProgrammatorC
 		//Перестроить деталь или сборку
 		private void Rebuild3dPart()
 		{
+			_activeDocument = (KompasDocument)_kompas7.ActiveDocument;
 			_activeDocumentType = _activeDocument.DocumentType;
-			if (_activeDocumentType != DocumentTypeEnum.ksDocumentAssembly &&
-			    _activeDocumentType != DocumentTypeEnum.ksDocumentPart) return;
-			_partOrAssembly = (ksDocument3D)_kompas.Document3D();
+			// if (_activeDocumentType != DocumentTypeEnum.ksDocumentAssembly &&
+			//     _activeDocumentType != DocumentTypeEnum.ksDocumentPart) return;
+			_partOrAssembly = (IKompasDocument3D)_activeDocument;
+			_kompas7.MessageBoxEx($"Дошёл до перестройки документа типа {_partOrAssembly.fileName}", "Информация ", 2);
 			_partOrAssembly.RebuildDocument();
 		}
 
@@ -140,7 +142,7 @@ namespace ProgrammatorC
 					break;
 				case 0:
 					command = -1;
-					itemType = 8; // "ENDMENU"
+					itemType = 19; // "ENDMENU"
 					break;
 			}
             return result;
@@ -182,6 +184,7 @@ namespace ProgrammatorC
 				case 4:	HideSelectedToInvisibleLayer();				break; // Убрать выделенное на скрытый слой
 				case 5:	CleanUpRecordsOfChangesInAllSheets();				break; // Затирание извещений
 				case 6:	CleanUpRecordsOfDates();				break; // Затирание дат
+				case 7:	Rebuild3dPart();				break; //Перестроить деталь или сборку
 			}
 
 			//_kompas7.MessageBoxEx("Готово", "Информация ", 3);
@@ -217,12 +220,6 @@ namespace ProgrammatorC
 
 			return result;
 		}
-
-		private void GetActiveDocumentType()
-		{
-			
-		}
-
 
 		#region COM Registration
 		
