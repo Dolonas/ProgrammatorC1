@@ -19,7 +19,7 @@ namespace ProgrammatorC
 		private KompasDocument _activeDocument;
 		private DocumentTypeEnum _activeDocumentType;
 		private ksDocument2D _doc;
-		private ksDocument3D _partOrAssembly;
+		//private ksDocument3D _partOrAssembly;
 
 
 		// Перестроить активный вид
@@ -92,13 +92,9 @@ namespace ProgrammatorC
 		//Перестроить деталь или сборку
 		private void Rebuild3dPart()
 		{
-			_activeDocument = (KompasDocument)_kompas7.ActiveDocument;
-			_activeDocumentType = _activeDocument.DocumentType;
-			// if (_activeDocumentType != DocumentTypeEnum.ksDocumentAssembly &&
-			//     _activeDocumentType != DocumentTypeEnum.ksDocumentPart) return;
-			_partOrAssembly = (IKompasDocument3D)_activeDocument;
-			_kompas7.MessageBoxEx($"Дошёл до перестройки документа типа {_partOrAssembly.fileName}", "Информация ", 2);
-			_partOrAssembly.RebuildDocument();
+			IKompasDocument3D partOrAssembly = (IKompasDocument3D)_kompas7.ActiveDocument;
+			_kompas7.MessageBoxEx($"Дошёл до перестройки документа {partOrAssembly.Name} типа {partOrAssembly.Type}", "Информация ", 2);
+			partOrAssembly.RebuildDocument();
 		}
 
 		[return: MarshalAs(UnmanagedType.BStr)] public string GetLibraryName()
@@ -169,12 +165,12 @@ namespace ProgrammatorC
 					return;
 			}
 			
-			if(_activeDocumentType == DocumentTypeEnum.ksDocumentAssembly)
-			{
-				_partOrAssembly = (ksDocument3D)_kompas.Document3D();
-				if (_partOrAssembly == null)
-					return;
-			}
+			// if(_activeDocumentType == DocumentTypeEnum.ksDocumentAssembly)
+			// {
+			// 	_partOrAssembly = (ksDocument3D)_kompas.Document3D();
+			// 	if (_partOrAssembly == null)
+			// 		return;
+			// }
 
 			switch (command)
 			{
