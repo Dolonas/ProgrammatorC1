@@ -11,22 +11,30 @@ using KompasAPI7;
 
 namespace ProgrammatorC
 {
+	enum DocType { Drawing, Part, Assembly, Spec, Fragment, Textual, Unnkown }
+	
 	[ClassInterface(ClassInterfaceType.AutoDual)]
 	public class ProgrammatorC
 	{
 		private KompasObject _kompas;
 		private IApplication _kompas7;
 		private KompasDocument _activeDocument;
-		private DocumentTypeEnum _activeDocumentType;
+		private DocType _activeDocumentType;
 		private ksDocument2D _doc;
 		//private ksDocument3D _partOrAssembly;
 
 
 		// Перестроить активный вид
-		private void RebuildSelectedView()
+		private void RebuildActiveElements()
 		{
-			if(_activeDocumentType == DocumentTypeEnum.ksDocumentDrawing)
+			AssignActiveDocumentType();
+			if(_activeDocumentType == DocType.Drawing)
 				_doc.ksRebuildDocument();
+			if(_activeDocumentType == DocType.Assembly || _activeDocumentType == DocType.Part)
+			{
+				IKompasDocument3D partOrAssembly = (IKompasDocument3D)_kompas7.ActiveDocument;
+				partOrAssembly.RebuildDocument();
+			}
 		}
 
 
@@ -47,7 +55,22 @@ namespace ProgrammatorC
 		// Убрать выделенное на скрытый слой
 		private void HideSelectedToInvisibleLayer()
 		{
-			
+			AssignActiveDocumentType();
+			if(_activeDocumentType == DocType.Drawing)
+			{
+				_doc = (ksDocument2D)_kompas.ActiveDocument2D();
+				if (_doc == null)
+					return;
+			}
+
+			var obj = _doc.ksLayer(1);
+			// var iLayerParam =
+			// 	kompas6_api5_module.ksLayerParam(_doc.GetParamStruct(kompas6_constants.ko_LayerParam));
+			// iLayerParam.Init();
+			// iLayerParam.color = 0;
+			// iLayerParam.name = "Скрытые";
+			// iLayerParam.state = 2;
+			// iDocument2D.ksSetObjParam(obj, iLayerParam, LDefin2D.ALLPARAM);
 		}
 
 		// Затирание извещений
@@ -92,9 +115,9 @@ namespace ProgrammatorC
 		//Перестроить деталь или сборку
 		private void Rebuild3dPart()
 		{
-			IKompasDocument3D partOrAssembly = (IKompasDocument3D)_kompas7.ActiveDocument;
-			_kompas7.MessageBoxEx($"Дошёл до перестройки документа {partOrAssembly.Name} типа {partOrAssembly.Type}", "Информация ", 2);
-			partOrAssembly.RebuildDocument();
+			// IKompasDocument3D partOrAssembly = (IKompasDocument3D)_kompas7.ActiveDocument;
+			// _kompas7.MessageBoxEx($"Дошёл до перестройки документа {partOrAssembly.Name} типа {partOrAssembly.Type}", "Информация ", 2);
+			// partOrAssembly.RebuildDocument();
 		}
 
 		[return: MarshalAs(UnmanagedType.BStr)] public string GetLibraryName()
@@ -156,9 +179,9 @@ namespace ProgrammatorC
 				return;
 
 			_activeDocument = (KompasDocument)_kompas7.ActiveDocument;
-			_activeDocumentType = _activeDocument.DocumentType;
+			AssignActiveDocumentType();
 			
-			if(_activeDocumentType == DocumentTypeEnum.ksDocumentDrawing)
+			if(_activeDocumentType == DocType.Drawing)
 			{
 				_doc = (ksDocument2D)_kompas.ActiveDocument2D();
 				if (_doc == null)
@@ -174,13 +197,13 @@ namespace ProgrammatorC
 
 			switch (command)
 			{
-				case 1:	RebuildSelectedView();			break; // перестроить вид
+				case 1:	RebuildActiveElements();			break; // перестроить вид
 				case 2: ChangeSelectedLinesToTypeThink();			break; // Изменить тип линий на тонкую
 				case 3: ChangeSelectedLinesToTypeInvisible();	break; // Изменить тип линий на вспомогательную
 				case 4:	HideSelectedToInvisibleLayer();				break; // Убрать выделенное на скрытый слой
 				case 5:	CleanUpRecordsOfChangesInAllSheets();				break; // Затирание извещений
 				case 6:	CleanUpRecordsOfDates();				break; // Затирание дат
-				case 7:	Rebuild3dPart();				break; //Перестроить деталь или сборку
+				//case 7:	Rebuild3dPart();				break; //Перестроить деталь или сборку
 			}
 
 			//_kompas7.MessageBoxEx("Готово", "Информация ", 3);
@@ -253,6 +276,40 @@ namespace ProgrammatorC
 			subKey.Close();
 		}
 		#endregion
-	}
 
+		private void AssignActiveDocumentType()
+		{
+			KompasDocument activeDocument = (KompasDocument)_kompas7.ActiveDocument;
+			switch (activeDocument.DocumentType)
+			{
+				case DocumentTypeEnum.ksDocumentDrawing:
+					_activeDocumentType = DocType.Drawing;
+					break;
+				case DocumentTypeEnum.ksDocumentAssembly:
+					_activeDocumentType = DocType.Assembly;
+					break;
+				case DocumentTypeEnum.ksDocumentPart:
+					_activeDocumentType = DocType.Part;
+					break;
+				case DocumentTypeEnum.ksDocumentSpecification:
+					_activeDocumentType = DocType.Spec;
+					break;
+				case DocumentTypeEnum.ksDocumentFragment:
+					_activeDocumentType = DocType.Fragment;
+					break;
+				case DocumentTypeEnum.ksDocumentTextual:
+					_activeDocumentType = DocType.Textual;
+					break;
+				case DocumentTypeEnum.ksDocumentUnknown:
+					_activeDocumentType = DocType.Unnkown;
+					break;
+				case DocumentTypeEnum.ksDocumentTechnologyAssembly:
+					_activeDocumentType = DocType.Unnkown;
+					break;
+				default:
+					_activeDocumentType = DocType.Unnkown;
+					break;
+			}
+		}
+	}
 }
