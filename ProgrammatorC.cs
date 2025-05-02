@@ -56,21 +56,20 @@ namespace ProgrammatorC
 		private void HideSelectedToInvisibleLayer()
 		{
 			AssignActiveDocumentType();
-			if(_activeDocumentType == DocType.Drawing)
-			{
-				_doc = (ksDocument2D)_kompas.ActiveDocument2D();
-				if (_doc == null)
-					return;
-			}
+			if(_activeDocumentType != DocType.Drawing)
+				return;
+			_doc = (ksDocument2D)_kompas.ActiveDocument2D();
+			if (_doc == null)
+				return;
 
 			var obj = _doc.ksLayer(1);
-			// var iLayerParam =
-			// 	kompas6_api5_module.ksLayerParam(_doc.GetParamStruct(kompas6_constants.ko_LayerParam));
-			// iLayerParam.Init();
-			// iLayerParam.color = 0;
-			// iLayerParam.name = "Скрытые";
-			// iLayerParam.state = 2;
-			// iDocument2D.ksSetObjParam(obj, iLayerParam, LDefin2D.ALLPARAM);
+			ksLayerParam layerParam =
+				(ksLayerParam)_kompas.GetParamStruct((short)StructType2DEnum.ko_LayerParam);
+			layerParam.Init();
+			layerParam.color = 0;
+			layerParam.name = "Скрытые";
+			layerParam.state = 2;
+			_doc.ksSetObjParam(obj, layerParam, ldefin2d.VIEW_LAYER_STATE);
 		}
 
 		// Затирание извещений
@@ -112,13 +111,6 @@ namespace ProgrammatorC
 			}
 		}
 		
-		//Перестроить деталь или сборку
-		private void Rebuild3dPart()
-		{
-			// IKompasDocument3D partOrAssembly = (IKompasDocument3D)_kompas7.ActiveDocument;
-			// _kompas7.MessageBoxEx($"Дошёл до перестройки документа {partOrAssembly.Name} типа {partOrAssembly.Type}", "Информация ", 2);
-			// partOrAssembly.RebuildDocument();
-		}
 
 		[return: MarshalAs(UnmanagedType.BStr)] public string GetLibraryName()
 		{
@@ -156,12 +148,8 @@ namespace ProgrammatorC
 					command = 6;
 					break;
 				case 7:
-					result = "7-Перестроить деталь или сборку";
-					command = 7;
-					break;
-				case 0:
 					command = -1;
-					itemType = 19; // "ENDMENU"
+					itemType = 3; // "ENDMENU"
 					break;
 			}
             return result;
@@ -187,13 +175,6 @@ namespace ProgrammatorC
 				if (_doc == null)
 					return;
 			}
-			
-			// if(_activeDocumentType == DocumentTypeEnum.ksDocumentAssembly)
-			// {
-			// 	_partOrAssembly = (ksDocument3D)_kompas.Document3D();
-			// 	if (_partOrAssembly == null)
-			// 		return;
-			// }
 
 			switch (command)
 			{
@@ -205,8 +186,6 @@ namespace ProgrammatorC
 				case 6:	CleanUpRecordsOfDates();				break; // Затирание дат
 				//case 7:	Rebuild3dPart();				break; //Перестроить деталь или сборку
 			}
-
-			//_kompas7.MessageBoxEx("Готово", "Информация ", 3);
 		}
 
 
